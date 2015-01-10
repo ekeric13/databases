@@ -20,7 +20,12 @@ describe("Persistent Node Chat Server", function() {
 
     /* Empty the db table before each test so that multiple tests
      * (or repeated runs of the tests) won't screw each other up: */
-    dbConnection.query("truncate " + tablename, done);
+     ALTER TABLE Orders
+DROP FOREIGN KEY fk_PerOrders
+
+     dbConnection.query("ALTER TABLE messages", done);
+     dbConnection.query("DROP FOREIGN KEY user_id", done);
+     dbConnection.query("truncate messages", done);
   });
 
   afterEach(function() {
@@ -31,15 +36,15 @@ describe("Persistent Node Chat Server", function() {
     // Post the user to the chat server.
     request({ method: "POST",
               uri: "http://127.0.0.1:3000/classes/users",
-              json: { username: "Valjean" }
+              json: { user_id: "Valjean" }
     }, function () {
       // Post a message to the node chat server:
       request({ method: "POST",
               uri: "http://127.0.0.1:3000/classes/messages",
               json: {
-                username: "Valjean",
-                message: "In mercy's name, three days is all I need.",
-                roomname: "Hello"
+                // username: "Valjean",
+                message_text: "In mercy's name, three days is all I need."
+                // roomname: "Hello"
               }
       }, function () {
         // Now if we look in the database, we should find the
